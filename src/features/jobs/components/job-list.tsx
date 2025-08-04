@@ -1,6 +1,6 @@
 import { Spinner } from '../../../components/ui/spinner';
 import { useJobFormStore } from '../../../store';
-import { useJobs } from '../hooks/job-hooks';
+import { useJobs } from '../api/job-hooks';
 import type { Job } from '../api/job-types';
 import { JobCreateForm } from './job-create-form';
 import { JobEditForm } from './job-edit-form';

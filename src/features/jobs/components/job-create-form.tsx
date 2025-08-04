@@ -1,6 +1,6 @@
 import { useJobFormStore } from '../../../store';
 import { Button } from '../../../components/ui/button/button';
-import { useCreateJob } from '../hooks/job-hooks';
+import { useCreateJob } from '../api/job-hooks';
 
 export const JobCreateForm = () => {
     const { title, body, setTitle, setBody, resetForm } = useJobFormStore();

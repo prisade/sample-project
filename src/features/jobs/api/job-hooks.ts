@@ -1,6 +1,3 @@
-// This file has been moved to ../hooks/job-hooks.ts
-// Please use the hooks from '../hooks/job-hooks' instead.
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import type { Job } from './job-types';
