@@ -1,11 +1,19 @@
 import { create } from "zustand";
 
+export type Job = {
+    id: number;
+    title: string;
+    body: string;
+    userId: number;
+};
+
 export type JobFormState = {
     title: string;
     body: string;
     editId: number | null;
     editTitle: string;
     editBody: string;
+    jobsData: Job[];
     setTitle: (title: string) => void;
     setBody: (body: string) => void;
     setEditId: (id: number | null) => void;
@@ -13,6 +21,10 @@ export type JobFormState = {
     setEditBody: (body: string) => void;
     resetForm: () => void;
     resetEdit: () => void;
+    setJobs: (jobs: Job[]) => void;
+    addJob: (job: Job) => void;
+    updateJob: (job: Job) => void;
+    deleteJob: (id: number) => void;
 };
 
 export const useJobFormStore = create<JobFormState>((set) => ({
@@ -21,6 +33,7 @@ export const useJobFormStore = create<JobFormState>((set) => ({
     editId: null,
     editTitle: '',
     editBody: '',
+    jobsData: [],
     setTitle: (title) => set({ title }),
     setBody: (body) => set({ body }),
     setEditId: (editId) => set({ editId }),
@@ -28,4 +41,8 @@ export const useJobFormStore = create<JobFormState>((set) => ({
     setEditBody: (editBody) => set({ editBody }),
     resetForm: () => set({ title: '', body: '' }),
     resetEdit: () => set({ editId: null, editTitle: '', editBody: '' }),
+    setJobs: (jobs) => set({ jobsData: jobs }),
+    addJob: (job) => set((state) => ({ jobsData: [...state.jobsData, job] })),
+    updateJob: (job) => set((state) => ({ jobsData: state.jobsData.map(j => j.id === job.id ? job : j) })),
+    deleteJob: (id) => set((state) => ({ jobsData: state.jobsData.filter(j => j.id !== id) })),
 }));

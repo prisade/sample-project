@@ -1,8 +1,8 @@
 import { useJobFormStore } from '../../../store';
 import { Button } from '../../../components/ui/button/button';
-import { useUpdateJob } from '../api/job-hooks';
+import type { Job } from '../api/job-types';
 
-export const JobEditForm = () => {
+export const JobEditForm = ({ updateJob }: { updateJob: (job: Job) => void }) => {
     const {
         editId,
         editTitle,
@@ -11,12 +11,11 @@ export const JobEditForm = () => {
         setEditBody,
         resetEdit
     } = useJobFormStore();
-    const updateJobMutation = useUpdateJob();
 
     const handleUpdateJob = (e: React.FormEvent) => {
         e.preventDefault();
         if (editId !== null) {
-            updateJobMutation.mutate({
+            updateJob({
                 id: editId,
                 title: editTitle,
                 body: editBody,
@@ -41,7 +40,7 @@ export const JobEditForm = () => {
                 required
             />
             <div className="flex gap-2">
-                <Button type="submit" className="bg-green-500 text-white px-2 py-1 rounded" isLoading={updateJobMutation.isPending}>
+                <Button type="submit" className="bg-green-500 text-white px-2 py-1 rounded">
                     Save
                 </Button>
                 <Button type="button" className="bg-gray-400 text-white px-2 py-1 rounded" onClick={resetEdit}>

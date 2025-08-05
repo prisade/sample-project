@@ -1,18 +1,18 @@
 import { useJobFormStore } from '../../../store';
 import { Button } from '../../../components/ui/button/button';
-import { useCreateJob } from '../api/job-hooks';
 
 export const JobCreateForm = () => {
-    const { title, body, setTitle, setBody, resetForm } = useJobFormStore();
-    const createJobMutation = useCreateJob();
+    const { title, body, setTitle, setBody, resetForm, addJob } = useJobFormStore();
 
     const handleAddJob = (e: React.FormEvent) => {
         e.preventDefault();
-        createJobMutation.mutate({
+        const newJob = {
+            id: Date.now() + Math.floor(Math.random() * 10000),
             title,
             body,
             userId: 1
-        });
+        };
+        addJob(newJob);
         resetForm();
     };
 
@@ -35,7 +35,6 @@ export const JobCreateForm = () => {
             <Button
                 type="submit"
                 className="bg-blue-500 text-white px-4 py-2 rounded"
-                isLoading={createJobMutation.isPending}
             >
                 Add Job
             </Button>
