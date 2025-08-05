@@ -29,9 +29,6 @@ export const JobList = () => {
         }
     }, [fetchedJobs, setJobs, jobsData.length]);
 
-    // Ensure jobsData is always up-to-date after addJob
-    // (If jobsData is not updating, force a re-render by using Zustand's addJob in JobCreateForm)
-
     if (error) {
         alert('Error fetching jobs: ' + (error as any).message);
     }
@@ -53,7 +50,7 @@ export const JobList = () => {
             <JobCreateForm />
             <div className="mt-4">
                 <ul className="space-y-2">
-                    {jobsData.map((jobsData: Job) => (
+                    {[...jobsData].reverse().map((jobsData: Job) => (
                         <li key={jobsData.id} className="border p-2 rounded flex flex-col gap-2">
                             {editId === jobsData.id ? (
                                 <JobEditForm updateJob={updateJob} />

@@ -14,6 +14,8 @@ export const JobCreateForm = () => {
         };
         addJob(newJob);
         resetForm();
+
+        console.log('Job added:', newJob);
     };
 
     return (
