@@ -23,6 +23,18 @@ export function useCreateJob() {
   });
 }
 
+export function useViewJob(){
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => 
+      axios.get(`https://jsonplaceholder.typicode.com/posts/${id}`).then(res => res.data),
+    onSuccess: (_data, id) => {
+      // Store the single job in cache under a unique key
+      queryClient.setQueryData(['job', id], _data);
+    }
+  })
+}
+
 export function useUpdateJob() {
   const queryClient = useQueryClient();
   return useMutation({

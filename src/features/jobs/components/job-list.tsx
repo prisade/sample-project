@@ -1,12 +1,13 @@
 import { Spinner } from '../../../components/ui/spinner';
 import { useJobFormStore } from '../../../store';
 import { useEffect } from 'react';
-import { useJobs } from '../api/job-hooks';
+import { useJobs, useViewJob } from '../api/job-hooks';
 import type { Job } from '../api/job-types';
 import { JobCreateForm } from './job-create-form';
 import { JobEditForm } from './job-edit-form';
 import { JobDeleteButton } from './job-delete-button';
 import { Button } from '../../../components/ui/button/button';
+import { JobView } from './job-view';
 
 export const JobList = () => {
     const {
@@ -17,10 +18,13 @@ export const JobList = () => {
         jobsData,
         setJobs,
         updateJob,
-        deleteJob
+        deleteJob,
+        isViewSingleJob,
+        setIsViewSingleJob,
     } = useJobFormStore();
 
     const { data: fetchedJobs, isLoading, error } = useJobs();
+    const { mutate: fetchSingleJob, data: jobData } = useViewJob();
 
     // On first fetch, store jobs in zustand
     useEffect(() => {
@@ -43,33 +47,47 @@ export const JobList = () => {
         setEditBody(job.body);
     };
 
+    const handleView = (id: number) => {
+        setIsViewSingleJob(true);
+        fetchSingleJob(id);
+        console.log('Vieweing job data: ', jobData);
+    }
+
     return (
         <main>
-            <h1 className="text-2xl font-bold">List of job listing</h1>
-            {/* Use JobCreateForm without addJob prop, it uses Zustand directly */}
-            <JobCreateForm />
-            <div className="mt-4">
-                <ul className="space-y-2">
-                    {[...jobsData].reverse().map((jobsData: Job) => (
-                        <li key={jobsData.id} className="border p-2 rounded flex flex-col gap-2">
-                            {editId === jobsData.id ? (
-                                <JobEditForm updateJob={updateJob} />
-                            ) : (
-                                <>
-                                    <div className="font-semibold">{jobsData.title}</div>
-                                    <div className="text-sm text-gray-600">{jobsData.body}</div>
-                                    <div className="flex gap-2 mt-2">
-                                        <Button className="bg-yellow-400 text-white px-2 py-1 rounded" onClick={() => handleEdit(jobsData)}>
-                                            Edit
-                                        </Button>
-                                        <JobDeleteButton jobId={jobsData.id} deleteJob={deleteJob} />
-                                    </div>
-                                </>
-                            )}
-                        </li>
-                    ))}
-                </ul>
-            </div>
+            {isViewSingleJob ? (
+                <div>
+                    <JobView jobData={jobData}/>
+                </div>
+            ) : (
+                <>
+                    <h1 className="text-2xl font-bold">List of job listing</h1>
+                    {/* Use JobCreateForm without addJob prop, it uses Zustand directly */}
+                    <JobCreateForm />
+                    <div className="mt-4">
+                        <ul className="space-y-2">
+                            {[...jobsData].reverse().map((jobsData: Job) => (
+                                <li key={jobsData.id} className="border p-2 rounded flex flex-col gap-2">
+                                    {editId === jobsData.id ? (
+                                        <JobEditForm updateJob={updateJob} />
+                                    ) : (
+                                        <>
+                                            <div className="font-semibold cursor-pointer" onClick={() => handleView(jobsData.id)}>{jobsData.title} test</div>
+                                            <div className="text-sm text-gray-600">{jobsData.body}</div>
+                                            <div className="flex gap-2 mt-2">
+                                                <Button className="bg-yellow-400 text-white px-2 py-1 rounded" onClick={() => handleEdit(jobsData)}>
+                                                    Edit
+                                                </Button>
+                                                <JobDeleteButton jobId={jobsData.id} deleteJob={deleteJob} />
+                                            </div>
+                                        </>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </>
+            )}
         </main>
     );
 };

@@ -14,6 +14,8 @@ export type JobFormState = {
     editTitle: string;
     editBody: string;
     jobsData: Job[];
+    jobData?: Job | null;
+    isViewSingleJob: boolean;
     setTitle: (title: string) => void;
     setBody: (body: string) => void;
     setEditId: (id: number | null) => void;
@@ -25,6 +27,7 @@ export type JobFormState = {
     addJob: (job: Job) => void;
     updateJob: (job: Job) => void;
     deleteJob: (id: number) => void;
+    setIsViewSingleJob: (isView: boolean) => void;
 };
 
 export const useJobFormStore = create<JobFormState>((set) => ({
@@ -34,6 +37,8 @@ export const useJobFormStore = create<JobFormState>((set) => ({
     editTitle: '',
     editBody: '',
     jobsData: [],
+    jobData: null,
+    isViewSingleJob: false,
     setTitle: (title) => set({ title }),
     setBody: (body) => set({ body }),
     setEditId: (editId) => set({ editId }),
@@ -42,7 +47,9 @@ export const useJobFormStore = create<JobFormState>((set) => ({
     resetForm: () => set({ title: '', body: '' }),
     resetEdit: () => set({ editId: null, editTitle: '', editBody: '' }),
     setJobs: (jobs) => set({ jobsData: jobs }),
+    setJob: (job: Job | null) => set({ jobData: job }),
     addJob: (job) => set((state) => ({ jobsData: [...state.jobsData, job] })),
     updateJob: (job) => set((state) => ({ jobsData: state.jobsData.map(j => j.id === job.id ? job : j) })),
     deleteJob: (id) => set((state) => ({ jobsData: state.jobsData.filter(j => j.id !== id) })),
+    setIsViewSingleJob: (isView) => set({ isViewSingleJob: isView })
 }));
