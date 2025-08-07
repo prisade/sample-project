@@ -51,13 +51,15 @@ export const JobList = () => {
         setIsViewSingleJob(true);
         fetchSingleJob(id);
         console.log('Vieweing job data: ', jobData);
+
+        console.log('Jobss data: ', jobsData);
     }
 
     return (
         <main>
             {isViewSingleJob ? (
                 <div>
-                    <JobView jobData={jobData}/>
+                    <JobView jobData={jobData} />
                 </div>
             ) : (
                 <>
