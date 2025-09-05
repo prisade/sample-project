@@ -1,5 +1,6 @@
 import { create } from "zustand";
 
+// Move Job type to types file
 export type Job = {
     id: number;
     title: string;
@@ -7,51 +8,73 @@ export type Job = {
     userId: number;
 };
 
-export type JobFormState = {
-    title: string;
-    body: string;
-    editId: number | null;
-    editTitle: string;
-    editBody: string;
-    jobsData: Job[];
-    jobData?: Job | null;
-    singleJobData: Job | null;
-    isViewSingleJob: boolean;
-    setTitle: (title: string) => void;
-    setBody: (body: string) => void;
-    setEditId: (id: number | null) => void;
-    setEditTitle: (title: string) => void;
-    setEditBody: (body: string) => void;
-    resetForm: () => void;
-    resetEdit: () => void;
-    setJobs: (jobs: Job[]) => void;
-    setSingleJobData: (job: Job | null) => void;
-    addJob: (job: Job) => void;
-    updateJob: (job: Job) => void;
-    deleteJob: (id: number) => void;
-    setIsViewSingleJob: (isView: boolean) => void;
+// UI-only state
+export type JobUIState = {
+    // Create form state
+    createForm: {
+        title: string;
+        body: string;
+    };
+    // Edit form state
+    editForm: {
+        id: number | null;
+        title: string;
+        body: string;
+    };
+    // View state
+    isViewMode: boolean;
+    // Actions
+    setCreateFormField: (field: keyof JobUIState['createForm'], value: string) => void;
+    setEditFormField: (field: keyof JobUIState['editForm'], value: string | number | null) => void;
+    resetCreateForm: () => void;
+    resetEditForm: () => void;
+    setViewMode: (isView: boolean) => void;
 };
 
-export const useJobFormStore = create<JobFormState>((set) => ({
-    title: '',
-    body: '',
-    editId: null,
-    editTitle: '',
-    editBody: '',
-    jobsData: [],
-    singleJobData: null,
-    isViewSingleJob: false,
-    setTitle: (title) => set({ title }),
-    setBody: (body) => set({ body }),
-    setEditId: (editId) => set({ editId }),
-    setEditTitle: (editTitle) => set({ editTitle }),
-    setEditBody: (editBody) => set({ editBody }),
-    resetForm: () => set({ title: '', body: '' }),
-    resetEdit: () => set({ editId: null, editTitle: '', editBody: '' }),
-    setJobs: (jobs) => set({ jobsData: jobs }),
-    setSingleJobData: (job: Job | null) => set({ singleJobData: job }),
-    addJob: (job) => set((state) => ({ jobsData: [...state.jobsData, job] })),
-    updateJob: (job) => set((state) => ({ jobsData: state.jobsData.map(j => j.id === job.id ? job : j) })),
-    deleteJob: (id) => set((state) => ({ jobsData: state.jobsData.filter(j => j.id !== id) })),
-    setIsViewSingleJob: (isView) => set({ isViewSingleJob: isView })
+const initialState = {
+    createForm: {
+        title: '',
+        body: '',
+    },
+    editForm: {
+        id: null,
+        title: '',
+        body: '',
+    },
+    isViewMode: false,
+};
+
+export const useJobUIStore = create<JobUIState>((set) => ({
+    ...initialState,
+    
+    setCreateFormField: (field, value) => 
+        set((state) => ({
+            createForm: {
+                ...state.createForm,
+                [field]: value
+            }
+        })),
+    
+    setEditFormField: (field, value) =>
+        set((state) => ({
+            editForm: {
+                ...state.editForm,
+                [field]: value
+            }
+        })),
+    
+    resetCreateForm: () => 
+        set((state) => ({
+            ...state,
+            createForm: initialState.createForm
+        })),
+    
+    resetEditForm: () =>
+        set((state) => ({
+            ...state,
+            editForm: initialState.editForm
+        })),
+    
+    setViewMode: (isView) =>
+        set({ isViewMode: isView }),
 }));

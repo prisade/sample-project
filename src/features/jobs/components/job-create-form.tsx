@@ -1,42 +1,66 @@
-import { useJobFormStore } from '../../../store';
+import { useJobUIStore } from '../../../store';
 import { Button } from '../../../components/ui/button/button';
+import { useCreateJob } from '../api/job-hooks';
 
 export const JobCreateForm = () => {
-    const { title, body, setTitle, setBody, resetForm, addJob } = useJobFormStore();
+    const { 
+        createForm: { title, body },
+        setCreateFormField,
+        resetCreateForm
+    } = useJobUIStore();
 
-    const handleAddJob = (e: React.FormEvent) => {
+    const { mutate: createJob, isPending: isLoading } = useCreateJob();
+
+    const handleAddJob = async (e: React.FormEvent) => {
         e.preventDefault();
-        const newJob = {
-            id: Date.now() + Math.floor(Math.random() * 10000),
-            title,
-            body,
-            userId: 1
-        };
-        addJob(newJob);
-        resetForm();
+        
+        createJob(
+            { title, body, userId: 1 },
+            {
+                onSuccess: () => {
+                    resetCreateForm();
+                }
+            }
+        );
     };
 
     return (
-        <form onSubmit={handleAddJob} className="my-4 flex flex-col gap-2 max-w-md">
-            <input
-                className="border p-2 rounded"
-                placeholder="Job Title"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                required
-            />
-            <textarea
-                className="border p-2 rounded"
-                placeholder="Job Description"
-                value={body}
-                onChange={e => setBody(e.target.value)}
-                required
-            />
+        <form onSubmit={handleAddJob} className="my-4 flex flex-col gap-3 max-w-md bg-white p-6 rounded-lg shadow-sm">
+            <div className="space-y-2">
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                    Job Title
+                </label>
+                <input
+                    id="title"
+                    className="w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter job title"
+                    value={title}
+                    onChange={e => setCreateFormField('title', e.target.value)}
+                    required
+                />
+            </div>
+            
+            <div className="space-y-2">
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                    Job Description
+                </label>
+                <textarea
+                    id="description"
+                    className="w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter job description"
+                    value={body}
+                    onChange={e => setCreateFormField('body', e.target.value)}
+                    rows={4}
+                    required
+                />
+            </div>
+
             <Button
                 type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded"
+                className="bg-blue-500 hover:bg-blue-600 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading}
             >
-                Add Job
+                {isLoading ? 'Adding...' : 'Add Job'}
             </Button>
         </form>
     );

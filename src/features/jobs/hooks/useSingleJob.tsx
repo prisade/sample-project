@@ -1,39 +1,20 @@
-import { useEffect, useState } from "react";
-import { useViewJob } from "../api/job-hooks";
-import { useJobFormStore } from "../../../store";
+import { useState } from "react";
+import { useJob } from "../api/job-hooks";
+import { useJobUIStore } from "../../../store";
 
 export function useSingleJob() {
-    const [singleJobId, setSingleJobId] = useState<number>(0);
-
-    const {
-        jobsData,
-        singleJobData,
-        isViewSingleJob,
-        setIsViewSingleJob,
-        setSingleJobData
-    } = useJobFormStore();
-
-    const { data: fetchedSingleJobData, isLoading: isLoadingJob } = useViewJob(singleJobId);
+    const [singleJobId, setSingleJobId] = useState<number | null>(null);
+    const { setViewMode } = useJobUIStore();
+    const { data: job, isLoading } = useJob(singleJobId ?? 0);
 
     const handleView = (id: number) => {
         setSingleJobId(id);
-        setIsViewSingleJob(true);
-        const filtered = jobsData.filter(job => job.id === id);
-        if (id > 100) {
-            setSingleJobData(filtered[0])
-        }
+        setViewMode(true);
     };
 
-    useEffect(() => {
-        if (fetchedSingleJobData) {
-            setSingleJobData(fetchedSingleJobData);
-        }
-    }, [fetchedSingleJobData, setSingleJobData]);
-
     return {
-        singleJobData,
-        isViewSingleJob,
-        isLoadingJob,
+        job,
+        isLoading,
         handleView
     }
 }
