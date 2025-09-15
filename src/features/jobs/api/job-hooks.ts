@@ -26,8 +26,6 @@ const jobsApi = {
   
   getById: async (id: number): Promise<Job> => {
     // Check mock data first
-    console.log("mockJobds: ", mockJobs);
-    console.log("id: ", id);
     const mockJob = mockJobs.find(job => job.id === id);
     if (mockJob) return mockJob;
     
